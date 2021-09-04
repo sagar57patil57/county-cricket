@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Glory:wght@200&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Titillium+Web&display=swap" rel="stylesheet">
+        <meta content="width=device-width, initial-scale=1" name="viewport" />
+        <style>
+            body, html {
+                margin: 0;
+                padding: 0;
+                font-family: 'Titillium Web', sans-serif;
+            }
+            .main-img {
+                height: 450px;
+                cursor: pointer;
+                width: 100%;
+            }
+            .nav {
+                text-align: center;
+                padding: 15px;
+                color: white;
+                background-color: black;
+            }
+            .score {
+                font-size: 20px;
+            }
+            .score-res {
+                text-align: center;
+                padding: 20px 0px;
+                color: white;
+                font-size: 20px;
+            }
+            .bg-green {
+                background: lightgreen;
+            }
+            .bg-red {
+                background: tomato;
+            }
+            .flex-box {
+                display: flex;
+            }
+            .box {
+                width: 50%;
+            }
+            @media (max-width: 600px) {
+                .box {
+                    width: 100%;
+                }
+                .flex-box {
+                    flex-direction: column;
+                }
+                .main-img {
+                    height: 37vh;
+                }
+                .score {
+                    margin: 0;
+                }
+                .score-res {
+                    padding: 12px 0px;
+                }
+            }
+            .result-page {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: space-around;
+                padding: 20vh 0;
+                height: 60vh;
+            }
+            .out-or-win {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            .outt {
+                font-size: 30px;
+            }
+            .out-wrap {
+                display: flex;
+                align-items: center;
+                flex-direction: column;
+            }
+            .f-w-800 {
+                font-weight: 800;
+            }
+            .play-again {
+                color: white;
+                background: #32de84;
+                padding: 10px 25px;
+                border: none;
+                border-radius: 8px;
+                font-size: 18px;
+                text-decoration: none;
+            }
+            .score-board {
+                width: 100%;
+                background-color: black;
+                height: 10vh;
+                display: flex;
+                align-items: center;
+                position: fixed;
+                bottom: 0;
+                color: white;
+                justify-content: center;
+                flex-direction: column;
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <div class="container">
+            <!--<div class="nav">
+                <p class="score">Your Score : <span id="scorecount">0</span></p>
+            </div>-->
+            <div class="flex-box" id="flex-box-id">
+                <!--<div class="box">
+                    <img src="https://wallpapercave.com/wp/wp1862703.jpg" class="main-img">
+                    <div class="score-res bg-red">8738</div>
+                </div>-->
+            </div>
+
+            <div id="scoreBoard" class="score-board">
+                <p>Score : <span id="scoreToBeDisplayed"></span></p>
+            </div>
+
+            <div id="respage">
+                <div class="result-page">
+                    <div class="out-or-win">
+                        <div class="out-wrap">
+                            <img src="http://i.stack.imgur.com/SBv4T.gif" alt="this slowpoke moves"  width="250" />
+                            <div class="outt" id="displayOut">OUT!!!</div>
+                            <div class="outt" id="displayWin">YOU WIN!!!</div>
+                        </div>
+                    </div>
+                    <div class="your-score f-w-800">YOUR SCORE : <span id="yourScore"></span></div>
+                    <div class="highest-score f-w-800"><span id="highestScore"></span></div>
+                    <a href="/home.html" class="play-again">Play Again</a>
+                </div>
+            </div>
+        </div>
+
+    </body>
+    <script>
+
+        const urlSearchParams = new URLSearchParams(window.location.search);
+        const params = Object.fromEntries(urlSearchParams.entries());
+        const DIFFICULTY = params.diff;
+        const resPage = document.getElementById('respage');
+        resPage.style.display = 'none';
+        const TYPE = params.type;
+        let scoreToBeDisplayed = document.getElementById('scoreToBeDisplayed');
+        scoreToBeDisplayed.innerHTML = 0;
+        if (TYPE == 1) {
+            data = getBatsman();
+        } else {
+            data = getBatsman();
+        }
+
+        function shuffler (data) {
+            data = shuffle(data);
+            const randomShift = Math.round(Math.random());
+            const randomLimit = Math.floor(Math.random() * (Math.ceil(5) - Math.floor(0) + 1) + 0);
+            data = randomShift == 0 ? data.slice(randomLimit, data.length - 1) : data.slice(0, data.length - randomLimit);
+            data = data.sort(function(a, b) { return a.score - b.score });
+            const len = data.length;
+            const mid = Math.floor((len-1)/2);
+            let i = mid,j=mid+1;
+            let randomNo = 0;
+            let output = [];
+            while (i > 0 && j < len) {
+                randomNo = Math.round(Math.random());
+                if (randomNo == 0) {
+                    output.push(data[i]);
+                    i--;
+                } else if (randomNo == 1) {
+                    output.push(data[j]);
+                    j++;
+                }
+            }
+            let rem = [];
+            if (j < len) {
+                console.log("last",...data.slice(j, len))
+                rem = shuffle(data.slice(j, len));
+            }
+            if (i >= 0) {
+                console.log("first",...data.slice(0, i+1))
+                rem = shuffle(data.slice(0, i+1));
+            }
+            console.log(output.length, rem)
+            output = [...output, ...rem]
+            return output;
+        }
+
+        // Shuffle data and scores must be unique
+        data = shuffler(data)
+        let gameDataLength = data.length;
+
+        // score will be 1,2,3,4,6 based on time
+
+        var show = [];
+        var level = parseInt(DIFFICULTY)+1;
+        var nextIndex = level;
+        var score = 0;
+        let scoreCount = document.getElementById('yourScore');
+        scoreCount.innerHTML = 0;
+        let scorecountval = 0;
+
+        var scoreValues = data.map(data => data.score);
+        
+        // Add data to be displayed
+        show = [];
+        for (let i = 0; i < level; i++) {
+            show.push(data[i]);
+        }
+
+        // loop and render initial content
+        const mainContainer = document.getElementById('flex-box-id');
+        for (let i = 0; i < show.length; i++) {
+            let box = document.createElement("div");
+            box.classList.add("box");
+            let heroImg = document.createElement("img");
+            heroImg.classList.add("main-img");
+            heroImg.src = show[i].imgUrl;
+            heroImg.dataset.score = show[i].score;
+            heroImg.addEventListener("click", function(e) {
+                imgSelected(e);
+            })
+            box.appendChild(heroImg);
+            mainContainer.appendChild(box)
+        }
+
+        function renderContent () {
+            document.querySelectorAll('.box').forEach(e => e.remove());
+            const mainContainer = document.getElementById('flex-box-id');
+            for (let i = 0; i < show.length; i++) {
+                if (!show[i]) {
+                    continue;
+                }
+                let box = document.createElement("div");
+                box.classList.add("box");
+                let heroImg = document.createElement("img");
+                heroImg.classList.add("main-img");
+                heroImg.src = show[i].imgUrl;
+                heroImg.dataset.score = show[i].score;
+                heroImg.addEventListener("click", function(e) {
+                    imgSelected(e);
+                })
+                box.appendChild(heroImg);
+                mainContainer.appendChild(box)
+            }
+        }
+
+        function imgSelected (ev) {
+            checkIfAnswerIsCorrect(ev.srcElement.dataset.score);
+        }
+
+        function checkIfMax (option) {
+            const tmp = scoreValues.slice(0, level);
+            return Math.max(...tmp) == option;
+        }
+
+        function updateScore() {
+            scoreCount.innerHTML = scorecountval || 0;
+            scoreToBeDisplayed.innerHTML = scorecountval || 0;
+        }
+
+        function checkIfAnswerIsCorrect (option) {
+            // if correct answer
+            if (checkIfMax(option)) {
+                scorecountval++;
+                updateScore();
+                // get index of option and update it by data[nextIndex] and nextIndex++
+                const index = scoreValues.indexOf(parseInt(option))
+                if (index > -1) {
+                    // update index th child on ui
+                    const nextOption = data[index];
+                    data[index] = data[nextIndex];
+                    scoreValues[index] = scoreValues[nextIndex];
+                    nextIndex++;
+                    show = [];
+                    for (let i = 0; i < level; i++) {
+                        show.push(data[i]);
+                    }
+                    // loop and render initial content
+                    renderContent();
+                }
+            }
+            // if wrong answer redirect to home and display score
+            else {
+                console.log("wrong");
+                gameOver();
+            }
+
+            if (scoreValues.length === nextIndex-1) {
+                // game is finished
+                console.log("game over")
+                gameOver();
+            }
+        }
+
+        function gameOver () {
+            document.querySelectorAll('.flex-box').forEach(e => e.remove());
+            document.getElementById('scoreBoard').remove();
+            // display score content
+            resPage.style.display = 'block';
+            console.log(scorecountval, gameDataLength)
+            if (scorecountval === gameDataLength - DIFFICULTY) {
+                document.getElementById('displayOut').style.display = 'none';
+                document.getElementById('displayWin').style.display = 'block';
+            } else {
+                document.getElementById('displayOut').style.display = 'block';
+                document.getElementById('displayWin').style.display = 'none';
+            }
+            let scoreCount = document.getElementById('highestScore').innerHTML = updateLocalStorage();
+        }
+
+        function getBatsman() {
+            return [
+                {
+                    imgUrl: "https://skyblogs.in/wp-content/uploads/2021/05/jayawardene-file-rsgopan.jpg",
+                    score: 25957
+                },
+                {
+                    imgUrl: "https://i.cdn.newsbytesapp.com/images/l197_18031602834958.jpg",
+                    score: 25553
+                },
+                {
+                    imgUrl: "https://wallpapercave.com/wp/wp1809759.jpg",
+                    score: 23000
+                },
+                {
+                    imgUrl: "https://wallpapercave.com/wp/wp1862703.jpg",
+                    score: 17253
+                },
+                {
+                    imgUrl: "https://images.hindustantimes.com/img/2021/06/27/1600x900/dravid-getty-cap_1621512704701_1624798454156.jpg",
+                    score: 24208
+                },
+                {
+                    imgUrl: 'https://timesofindia.indiatimes.com/photo/69269042.cms',
+                    score: 18672
+                },
+                {
+                    imgUrl: 'https://www.cricketcountry.com/wp-content/uploads/2019/03/Brian-Lara-PTI.jpg',
+                    score: 22358
+                },
+                {
+                    imgUrl: "https://bsmedia.business-standard.com/_media/bs/img/article/2019-02/17/full/1550403842-375.jpg",
+                    score: 27438
+                },
+                {
+                    imgUrl: 'https://images.indianexpress.com/2020/04/sourav-ganguly-india.jpg',
+                    score: 18575
+                },
+                {
+                    imgUrl: 'https://www.cricketcountry.com/wp-content/uploads/2014/03/Graeme-Smith-of-South-Africa-speaks-to-media-at-a-post-match-conference-after-day-four-of-the-Second-Test-match-204.jpg',
+                    score: 17236
+                },
+                {
+                    imgUrl: 'https://p.imgci.com/db/PICTURES/CMS/287900/287964.jpg',
+                    score: 19548
+                },
+                {
+                    imgUrl: 'https://www.india.com/wp-content/uploads/2020/07/Kane-Williamson-celebrates-after-scoring-ton-for-New-Zealand%C2%A9Twitter.jpg',
+                    score: 15208
+                },
+                {
+                    imgUrl: 'https://cdn.wisden.com/wp-content/uploads/2019/11/Gilchrist-e1573548117301-980x530.jpg',
+                    score: 15461
+                },
+                {
+                    imgUrl: 'https://www.cricketcountry.com/wp-content/uploads/2016/08/Joe.jpg',
+                    score: 16223
+                },
+                {
+                    imgUrl: 'https://cdn.dnaindia.com/sites/default/files/styles/full/public/2021/06/29/982460-dhini.jpg',
+                    score: 17266
+                },
+                {
+                    imgUrl: 'https://cricketaddictor.gumlet.io/wp-content/uploads/2021/06/Sanath-Jayasuriya.jpg?compress=true&quality=80&w=480&dpr=2.6',
+                    score: 21032
+                },
+                {
+                    imgUrl: 'https://www.cricketcountry.com/wp-content/uploads/2015/07/Tillakaratne-Dilshan-of-Sri-Lanka-celebrates-his-century-212.jpg',
+                    score: 17671
+                },
+                {
+                    imgUrl: 'https://staticg.sportskeeda.com/editor/2018/07/2d752-1530630905-800.jpg',
+                    score: 20988
+                },
+                {
+                    imgUrl: 'https://c.ndtvimg.com/q1614l3g_alastair-cook-afp_625x300_04_September_18.jpg',
+                    score: 15737
+                },
+                {
+                    imgUrl: 'https://img.onmanorama.com/content/dam/mm/en/sports/cricket/images/2021/4/9/abd-shot.jpg',
+                    score: 20014
+                },
+                {
+                    imgUrl: 'https://en.100mbsports.com/wp-content/uploads/2020/07/000_Hkg10157338-e1595341341706.jpg',
+                    score: 28016
+                },
+                {
+                    imgUrl: 'https://images.hindustantimes.com/img/2021/06/22/1600x900/_e4c036bc-20f5-11eb-8734-93f916536cd4_1624347256819.jpg',
+                    score: 17790
+                },
+                {
+                    imgUrl: 'https://www.cricket22yard.com/wp-content/uploads/2020/04/Inzamam-ul-Haq-696x413.jpg',
+                    score: 20580
+                },
+                {
+                    imgUrl: 'https://cdn.dnaindia.com/sites/default/files/styles/full/public/2017/10/02/613862-steve-smith-australia-champions-trophy-2017-afp.jpg',
+                    score: 17236
+                },
+                {
+                    imgUrl: 'https://images.hindustantimes.com/img/2021/03/31/1600x900/_5f0663ce-7ae8-11ea-9ef9-f1be7341055a_1617170114421.JPG',
+                    score: 17112
+                },
+                {
+                    imgUrl: 'https://st2.cricketcountry.com/wp-content/uploads/cricket/image_20130401115654.jpg',
+                    score: 16319
+                },
+                {
+                    imgUrl: 'https://img1.hscicdn.com/image/upload/f_auto/lsci/db/PICTURES/CMS/155300/155337.3.jpg',
+                    score: 18496
+                },
+                {
+                    imgUrl: 'https://admin.thecricketer.com/weblab/Sites/96c8b790-b593-bfda-0ba4-ecd3a9fdefc2/resources/images/site/rosstaylrheadshot-min.jpg',
+                    score: 18054
+                },
+                {
+                    imgUrl: 'https://cdn.wisden.com/wp-content/uploads/2019/07/Webp.net-resizeimage-2019-07-27T155711.978.jpg',
+                    score: 17698
+                },
+                {
+                    imgUrl: 'https://img.cricketworld.com/images/f-076937/matthew-hayden-of-australia.jpg',
+                    score: 16066
+                },
+                {
+                    imgUrl: 'https://hindi.cdn.zeenews.com/hindi/sites/default/files/2021/08/28/909099-rohit-sharma-ani.jpg',
+                    score: 15978
+                }
+            ];
+        }
+
+        function getBowler () {
+
+        }
+
+        function updateLocalStorage () {
+            const hScore = window.localStorage.getItem('highestScore');
+            if (!hScore || hScore < scorecountval) {
+                window.localStorage.setItem('highestScore', scorecountval);
+                return 'NEW HIGHEST SCORE : ' + scorecountval;
+            }
+            return 'YOUR HIGHEST SCORE EVERRRR... : ' + hScore || 0;
+        }
+
+        function shuffle(array) {
+            var currentIndex = array.length,  randomIndex;
+
+            // While there remain elements to shuffle...
+            while (currentIndex != 0) {
+
+                // Pick a remaining element...
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+
+                // And swap it with the current element.
+                [array[currentIndex], array[randomIndex]] = [
+                array[randomIndex], array[currentIndex]];
+            }
+
+            return array;
+        }
+
+    </script>
+</html>

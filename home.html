@@ -1,0 +1,163 @@
+<html>
+    <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Titillium+Web&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Glory:wght@200&display=swap" rel="stylesheet">
+        <meta content="width=device-width, initial-scale=1" name="viewport" />
+        <style>
+            body, html {
+                margin: 0;
+                padding: 0;
+                font-family: 'Glory', sans-serif;
+                background: url("https://wallpapercave.com/wp/wp1809746.jpg");
+                background-attachment: fixed;
+                background-repeat: no-repeat;
+                background-size: cover;
+                color: white;
+            }
+            .dot-wrap {
+                display: flex;
+                justify-content: space-around;
+                padding: 0px 40%;
+            }
+            .dot {
+                height: 40px;
+                width: 40px;
+                background-image: linear-gradient(to right, red , #ff6666);
+                border-radius: 50%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                color: white;
+                box-shadow: 0 0 1px #fff;
+                font-weight: 700;
+                font-size: 16px;
+                cursor: pointer;
+            }
+            .diffy {
+                display: flex;
+                justify-content: center;
+                margin-top: 10vh;
+                margin-bottom: 25px;
+                font-size: 18px;
+            }
+            .btn {
+                background-color: white;
+                color: black;
+                padding: 9px 25px;
+                font-size: 16px;
+                cursor: pointer;
+                margin: 0px 5px;
+                border: none;
+                border-radius: 25px;
+            }
+            .danger {
+                color: white;
+                background: #f44336;
+            }
+
+            .dangerselected {
+                background: white;
+                color: #f44336;
+            }
+            .ctr-flex {
+                display: flex;
+                justify-content: center;
+            }
+            .play-now {
+                position: fixed;
+                bottom: 60px;
+                color: white;
+                background: #32de84;
+                padding: 10px 25px;
+                border: none;
+                border-radius: 8px;
+                font-size: 18px;
+            }
+            .mr-t-10v {
+                margin-top: 5vh;
+            }
+            @media (max-width: 600px) {
+                body, html {
+                    background: url("https://wallpapercave.com/wp/wp4159546.jpg");
+                    background-attachment: fixed;
+                    background-repeat: no-repeat;
+                    background-size: cover;
+                }
+                .dot-wrap {
+                    padding: 0px 25%;
+                }
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <h2 style="text-align: center;margin-top:10vh;font-size: 30px;">County Cricket</h2>
+        <div class="backgnd">
+            <!--<img src="http://i.stack.imgur.com/SBv4T.gif" alt="this slowpoke moves"  width="250" />-->
+            <div>
+                <p class="diffy">Select Difficulty : </p>
+                <div class="dot-wrap">
+                    <div class="dot" id="dot1">1</div>
+                    <div class="dot" id="dot2">2</div>
+                    <div class="dot" id="dot3">3</div>    
+                </div>
+                <div class="ctr-flex mr-t-10v">
+                    <button class="btn danger" onclick="typeChange(1)" id="type1">Batsmen</button>
+                    <button class="btn danger" onclick="typeChange(2)" id="type2">Bowler</button>
+                </div>
+            </div>
+            <div class="ctr-flex">
+                <button class="play-now" onclick="play()">PLAY NOW</button>
+            </div>
+        </div>
+
+    </body>
+    <script>
+        let gameType = 1;
+        let diffy = 1;
+        let dots = document.getElementsByClassName('dot');
+        let type = document.getElementsByClassName('danger');
+        document.getElementById("type1").classList.add('dangerselected');
+        console.log(dots)
+        updateDots();
+        for (let index=0;index<3;index++) {
+            dots[index].addEventListener("click", function(e) {
+                diffy = index + 1;
+                console.log("diff", diffy);
+                updateDots();
+            });
+        }
+
+        function updateDots () {
+            for (let i=0;i<3;i++) {
+                if(i+1 === diffy) {
+                    dots[i].style.color="red";
+                    dots[i].style.background="white";
+                } else {
+                    dots[i].style.backgroundImage = "linear-gradient(to right, red , #ff6666)";
+                    dots[i].style.color = "white";
+                }
+            }   
+        }
+
+        function typeChange(val) {
+            console.log(val)
+            gameType=val;
+            if (val==1) {
+                document.getElementById("type1").classList.add('dangerselected');
+                document.getElementById("type2").classList.remove('dangerselected');
+            } else {
+                document.getElementById("type2").classList.add('dangerselected');
+                document.getElementById("type1").classList.remove('dangerselected');
+            }
+        }
+
+        function play () {
+            window.location.replace('/index.html?diff='+diffy+"&type="+gameType);
+        }
+
+    </script>
+</html>
